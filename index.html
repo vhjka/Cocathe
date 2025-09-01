@@ -402,6 +402,12 @@
                 return;
             }
             
+            // التحقق من صحة الرابط
+            if (!isValidVideoUrl(videoUrl)) {
+                showError('رابط الفيديو غير صالح أو غير مدعوم. يرجى استخدام رابط من يوتيوب، فيسبوك، تيك توك، فيميوه، أو DailyMotion');
+                return;
+            }
+            
             statusMessage.style.display = 'block';
             statusMessage.textContent = 'جاري تحميل الفيديو...';
             
@@ -427,6 +433,28 @@
             } catch (error) {
                 console.error('Error loading video:', error);
                 showError('حدث خطأ في تحميل الفيديو. يرجى المحاولة مرة أخرى.');
+            }
+        }
+        
+        // دالة للتحقق من صحة رابط الفيديو
+        function isValidVideoUrl(url) {
+            // قائمة بالنطاقات المسموح بها
+            const allowedDomains = [
+                'youtube.com',
+                'youtu.be',
+                'vimeo.com',
+                'facebook.com',
+                'fb.watch',
+                'tiktok.com',
+                'dailymotion.com',
+                'dai.ly'
+            ];
+            
+            try {
+                const urlObj = new URL(url);
+                return allowedDomains.some(domain => urlObj.hostname.includes(domain));
+            } catch (e) {
+                return false;
             }
         }
         
@@ -469,43 +497,7 @@
                     videoId = videoUrl.split('/').pop();
                 }
                 
-                embedCode = `
-                    <div id="player"></div>
-                    <script>
-                        var tag = document.createElement('script');
-                        tag.src = "https://www.youtube.com/iframe_api";
-                        var firstScriptTag = document.getElementsByTagName('script')[0];
-                        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-                        
-                        var player;
-                        function onYouTubeIframeAPIReady() {
-                            player = new YT.Player('player', {
-                                height: '100%',
-                                width: '100%',
-                                videoId: '${videoId}',
-                                playerVars: {
-                                    'playsinline': 1,
-                                    'controls': 1,
-                                    'rel': 0,
-                                    'enablejsapi': 1,
-                                    'origin': window.location.origin
-                                },
-                                events: {
-                                    'onStateChange': onPlayerStateChange,
-                                    'onReady': onPlayerReady
-                                }
-                            });
-                        }
-                        
-                        function onPlayerReady(event) {
-                            console.log('YouTube player is ready');
-                        }
-                        
-                        function onPlayerStateChange(event) {
-                            // يمكن إضافة منطق إضافي هنا إذا لزم الأمر
-                        }
-                    <\/script>
-                `;
+                embedCode = `<iframe src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=${window.location.origin}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
             } 
             // Vimeo
             else if (videoType === 'vimeo') {
@@ -542,13 +534,21 @@
             }
             
             videoContainer.innerHTML = embedCode;
+            
+            // إضافة event listener للفيديو بعد تحميله
+            setTimeout(() => {
+                const iframe = videoContainer.querySelector('iframe');
+                if (iframe) {
+                    iframe.onload = function() {
+                        console.log('تم تحميل الفيديو بنجاح');
+                    };
+                }
+            }, 1000);
         }
         
         // دالة لتشغيل الفيديو للجميع
         function playVideo() {
-            if (currentVideoType === 'youtube' && typeof player !== 'undefined' && player.playVideo) {
-                player.playVideo();
-            } else if (currentVideoUrl) {
+            if (currentVideoUrl) {
                 // إضافة معلمة التشغيل التلقائي بناءً على نوع المنصة
                 let autoplayUrl = currentVideoUrl;
                 
@@ -566,9 +566,7 @@
         
         // دالة لإيقاف الفيديو للجميع
         function pauseVideo() {
-            if (currentVideoType === 'youtube' && typeof player !== 'undefined' && player.pauseVideo) {
-                player.pauseVideo();
-            } else if (currentVideoUrl) {
+            if (currentVideoUrl) {
                 // إزالة معلمة التشغيل التلقائي بناءً على نوع المنصة
                 let noAutoplayUrl = currentVideoUrl;
                 
@@ -592,10 +590,6 @@
             if (!seekTime || isNaN(seekTime)) {
                 showError('يرجى إدخال وقت صحيح بالثواني');
                 return;
-            }
-            
-            if (currentVideoType === 'youtube' && typeof player !== 'undefined' && player.seekTo) {
-                player.seekTo(parseInt(seekTime), true);
             }
             
             saveVideoStateToFirebase('seek', currentVideoUrl, currentVideoType, parseInt(seekTime));
@@ -697,10 +691,6 @@
                         currentVideoUrl = state.videoUrl;
                         currentVideoType = state.videoType || getVideoType(state.videoUrl);
                         document.getElementById('seekTime').value = state.seekTime;
-                        
-                        if (currentVideoType === 'youtube' && typeof player !== 'undefined' && player.seekTo) {
-                            player.seekTo(state.seekTime, true);
-                        }
                     }
                     break;
             }
