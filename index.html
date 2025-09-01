@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بث فيديو مباشر متزامن مع دردشة</title>
+    <title>بث فيديو مباشر متزامن</title>
     <style>
         * {
             box-sizing: border-box;
@@ -30,7 +30,6 @@
             padding: 30px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             text-align: center;
-            position: relative;
         }
         
         header {
@@ -270,154 +269,10 @@
             font-size: 0.9rem;
         }
         
-        /* تصميم الدردشة العائمة */
-        .chat-container {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .chat-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(45deg, #2196f3, #1976d2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-        }
-        
-        .chat-icon:hover {
-            transform: scale(1.1);
-        }
-        
-        .chat-icon i {
-            color: white;
-            font-size: 24px;
-        }
-        
-        .chat-window {
-            position: absolute;
-            bottom: 70px;
-            left: 0;
-            width: 300px;
-            height: 400px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transform: scale(0);
-            transform-origin: bottom left;
-            transition: transform 0.3s ease;
-        }
-        
-        .chat-window.open {
-            transform: scale(1);
-        }
-        
-        .chat-header {
-            background: linear-gradient(to right, #2196f3, #1976d2);
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .chat-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
-        }
-        
-        .close-chat {
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1.5rem;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .chat-messages {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .message {
-            max-width: 80%;
-            padding: 10px 15px;
-            border-radius: 15px;
-            word-wrap: break-word;
-        }
-        
-        .message.my-message {
-            align-self: flex-end;
-            background: linear-gradient(to right, #2196f3, #1976d2);
-            color: white;
-        }
-        
-        .message.other-message {
-            align-self: flex-start;
-            background: #f1f1f1;
-            color: #333;
-        }
-        
-        .message-sender {
-            font-size: 0.8rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        
-        .chat-input {
-            display: flex;
-            padding: 10px;
-            border-top: 1px solid #eee;
-        }
-        
-        .chat-input input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            margin-bottom: 0;
-        }
-        
-        .chat-input button {
-            padding: 10px 15px;
-            margin-left: 5px;
-            background: linear-gradient(to right, #2196f3, #1976d2);
-        }
-        
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #f44336;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: bold;
+        .current-time {
+            margin: 10px 0;
+            font-size: 1rem;
+            color: #555;
         }
         
         @media (max-width: 768px) {
@@ -447,20 +302,8 @@
             .seek-controls {
                 flex-direction: column;
             }
-            
-            .chat-container {
-                bottom: 10px;
-                left: 10px;
-            }
-            
-            .chat-window {
-                width: 280px;
-                height: 350px;
-            }
         }
     </style>
-    <!-- رابط أيقونات Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
     <div class="container">
@@ -468,7 +311,7 @@
             <div class="developer-badge">مطور التطبيق: محمد الناصر محمودي</div>
             <h1><span class="heart">❤️</span> بث فيديو مباشر متزامن <span class="heart">❤️</span></h1>
             <p>شاهدوا الفيديو معاً في نفس اللحظة مع من تحبون</p>
-            <p>أي تحكم في التشغيل أو الإيقاف أو التقديم السريع سينطبق على جميع المشاهدين</p>
+            <p>الفيديو سيستمر في التشغيل حتى مع مغادرة المستخدمين</p>
         </header>
         
         <div class="platform-badges">
@@ -501,6 +344,10 @@
             </div>
         </div>
         
+        <div class="current-time" id="currentTime">
+            الوقت الحالي: 0 ثانية
+        </div>
+        
         <div class="users-count" id="usersCount">0 مستخدم متصل</div>
         
         <div class="instructions">
@@ -509,38 +356,15 @@
                 <li>أدخل رابط فيديو من أي منصة (يوتيوب، فيسبوك، تيك توك، إلخ)</li>
                 <li>اضغط على زر "تحميل الفيديو للجميع"</li>
                 <li>سيظهر الفيديو لجميع المتصلين في نفس الوقت</li>
-                <li>أي ضغط على زر تشغيل أو إيقاف أو تقديم سريع سينطبق على الجميع</li>
+                <li>الفيديو سيستمر في التشغيل حتى مع مغادرة المستخدمين</li>
+                <li>عند إعادة التشغيل، سيبدأ الفيديو من حيث توقف</li>
                 <li>شارك رابط هذه الصفحة مع من تريد لمشاهدة الفيديو معاً</li>
-                <li>استخدم أيقونة الدردشة في الزاوية للتواصل مع المشاهدين الآخرين</li>
             </ul>
         </div>
         
         <footer>
             <p>صنع بكل ❤️ لمشاركة اللحظات الجميلة معاً في نفس اللحظة</p>
         </footer>
-    </div>
-
-    <!-- دردشة جماعية عائمة -->
-    <div class="chat-container">
-        <div class="chat-icon" onclick="toggleChat()">
-            <i class="material-icons">chat</i>
-            <div class="notification-badge" id="notificationBadge" style="display: none;">0</div>
-        </div>
-        <div class="chat-window" id="chatWindow">
-            <div class="chat-header">
-                <h3>الدردشة الجماعية</h3>
-                <button class="close-chat" onclick="toggleChat()">×</button>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <!-- سيتم عرض الرسائل هنا -->
-            </div>
-            <div class="chat-input">
-                <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا..." onkeypress="handleMessageKeypress(event)">
-                <button onclick="sendMessage()">
-                    <i class="material-icons">send</i>
-                </button>
-            </div>
-        </div>
     </div>
 
     <!-- إضافة Firebase -->
@@ -575,9 +399,9 @@
         let isHost = false;
         let connectedUsers = 0;
         let youtubePlayer = null;
-        let userName = "مستخدم_" + Math.floor(Math.random() * 1000);
-        let unreadMessages = 0;
-        let chatOpen = false;
+        let currentVideoTime = 0;
+        let videoDuration = 0;
+        let timeUpdateInterval = null;
         
         // دالة لتحميل الفيديو
         function loadVideo() {
@@ -606,7 +430,7 @@
                 createVideoEmbed(videoUrl);
                 
                 // حفظ حالة الفيديو في Firebase
-                saveVideoStateToFirebase('load', videoUrl, currentVideoType);
+                saveVideoStateToFirebase('load', videoUrl, currentVideoType, 0);
                 
                 statusMessage.textContent = 'تم تحميل الفيديو للجميع!';
                 setTimeout(() => {
@@ -705,6 +529,8 @@
                 if (iframe) {
                     iframe.onload = function() {
                         console.log('تم تحميل الفيديو بنجاح');
+                        // بدء تتبع الوقت للفيديو
+                        startTrackingVideoTime();
                     };
                     iframe.onerror = function() {
                         showError('حدث خطأ في تحميل الفيديو. قد يكون الرابط غير مدعوم أو هناك مشكلة في الاتصال.');
@@ -713,44 +539,116 @@
             }, 1000);
         }
         
+        // دالة لبدء تتبع وقت الفيديو
+        function startTrackingVideoTime() {
+            // هذه الدالة ستعمل فقط مع YouTube حالياً
+            if (currentVideoType !== 'youtube') return;
+            
+            // إضافة API YouTube
+            const tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            const firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            
+            // تهيئة مشغل YouTube
+            window.onYouTubeIframeAPIReady = function() {
+                const iframe = document.querySelector('iframe');
+                if (iframe) {
+                    youtubePlayer = new YT.Player(iframe, {
+                        events: {
+                            'onStateChange': onPlayerStateChange,
+                            'onReady': onPlayerReady
+                        }
+                    });
+                }
+            };
+        }
+        
+        // عندما يكون المشغل جاهزاً
+        function onPlayerReady(event) {
+            console.log('مشغل YouTube جاهز');
+            // بدء تحديث الوقت كل ثانية
+            timeUpdateInterval = setInterval(updateVideoTime, 1000);
+        }
+        
+        // عند تغيير حالة المشغل
+        function onPlayerStateChange(event) {
+            // حالة التشغيل
+            if (event.data == YT.PlayerState.PLAYING) {
+                console.log('بدء التشغيل');
+            }
+            // حالة الإيقاف
+            else if (event.data == YT.PlayerState.PAUSED) {
+                console.log('تم الإيقاف');
+                // حفظ الوقت الحالي عند الإيقاف
+                if (youtubePlayer && youtubePlayer.getCurrentTime) {
+                    currentVideoTime = youtubePlayer.getCurrentTime();
+                    saveVideoStateToFirebase('pause', currentVideoUrl, currentVideoType, currentVideoTime);
+                }
+            }
+            // حالة انتهاء الفيديو
+            else if (event.data == YT.PlayerState.ENDED) {
+                console.log('انتهاء الفيديو');
+                currentVideoTime = 0;
+                saveVideoStateToFirebase('ended', currentVideoUrl, currentVideoType, 0);
+            }
+        }
+        
+        // تحديث وقت الفيديو
+        function updateVideoTime() {
+            if (youtubePlayer && youtubePlayer.getCurrentTime) {
+                currentVideoTime = youtubePlayer.getCurrentTime();
+                document.getElementById('currentTime').textContent = `الوقت الحالي: ${Math.floor(currentVideoTime)} ثانية`;
+                
+                // حفظ الوقت كل 10 ثواني للتأكد من المزامنة
+                if (Math.floor(currentVideoTime) % 10 === 0) {
+                    saveVideoStateToFirebase('playing', currentVideoUrl, currentVideoType, currentVideoTime);
+                }
+            }
+        }
+        
         // دالة لتشغيل الفيديو للجميع
         function playVideo() {
-            if (currentVideoUrl) {
-                // إضافة معلمة التشغيل التلقائي بناءً على نوع المنصة
-                let autoplayUrl = currentVideoUrl;
+            if (currentVideoType === 'youtube' && youtubePlayer && youtubePlayer.playVideo) {
+                // التشغيل من الوقت الحالي المخزن
+                youtubePlayer.playVideo();
+                saveVideoStateToFirebase('play', currentVideoUrl, currentVideoType, currentVideoTime);
+            } else if (currentVideoUrl) {
+                // إضافة معلمة التشغيل التلقائي والوقت للمنصات الأخرى
+                let playUrl = currentVideoUrl;
                 
                 if (currentVideoType === 'youtube') {
-                    autoplayUrl = currentVideoUrl + (currentVideoUrl.includes('?') ? '&' : '?') + 'autoplay=1';
+                    playUrl = currentVideoUrl + (currentVideoUrl.includes('?') ? '&' : '?') + 
+                              `autoplay=1&start=${Math.floor(currentVideoTime)}`;
                 } else if (currentVideoType === 'vimeo') {
-                    autoplayUrl = currentVideoUrl + (currentVideoUrl.includes('?') ? '&' : '?') + 'autoplay=1';
-                } else if (currentVideoType === 'dailymotion') {
-                    autoplayUrl = currentVideoUrl + (currentVideoUrl.includes('?') ? '&' : '?') + 'autoplay=1';
+                    playUrl = currentVideoUrl + (currentVideoUrl.includes('?') ? '&' : '?') + 'autoplay=1';
                 }
                 
-                createVideoEmbed(autoplayUrl);
+                createVideoEmbed(playUrl);
+                saveVideoStateToFirebase('play', currentVideoUrl, currentVideoType, currentVideoTime);
             }
-            
-            saveVideoStateToFirebase('play', currentVideoUrl, currentVideoType);
         }
         
         // دالة لإيقاف الفيديو للجميع
         function pauseVideo() {
-            if (currentVideoUrl) {
-                // إزالة معلمة التشغيل التلقائي بناءً على نوع المنصة
-                let noAutoplayUrl = currentVideoUrl;
+            if (currentVideoType === 'youtube' && youtubePlayer && youtubePlayer.pauseVideo) {
+                youtubePlayer.pauseVideo();
+                // حفظ الوقت الحالي عند الإيقاف
+                currentVideoTime = youtubePlayer.getCurrentTime();
+                saveVideoStateToFirebase('pause', currentVideoUrl, currentVideoType, currentVideoTime);
+            } else if (currentVideoUrl) {
+                // إزالة معلمة التشغيل التلقائي للمنصات الأخرى
+                let pauseUrl = currentVideoUrl;
                 
                 if (currentVideoUrl.includes('autoplay=1')) {
-                    noAutoplayUrl = currentVideoUrl.replace('autoplay=1', 'autoplay=0');
+                    pauseUrl = currentVideoUrl.replace('autoplay=1', 'autoplay=0');
                 } else if (currentVideoUrl.includes('autoplay=true')) {
-                    noAutoplayUrl = currentVideoUrl.replace('autoplay=true', 'autoplay=false');
-                } else {
-                    noAutoplayUrl = currentVideoUrl + (currentVideoUrl.includes('?') ? '&' : '?') + 'autoplay=0';
+                    pauseUrl = currentVideoUrl.replace('autoplay=true', 'autoplay=false');
                 }
                 
-                createVideoEmbed(noAutoplayUrl);
+                createVideoEmbed(pauseUrl);
+                saveVideoStateToFirebase('pause', currentVideoUrl, currentVideoType, currentVideoTime);
             }
-            
-            saveVideoStateToFirebase('pause', currentVideoUrl, currentVideoType);
         }
         
         // دالة للانتقال إلى وقت محدد في الفيديو
@@ -767,24 +665,15 @@
                 return;
             }
             
-            // إنشاء رابط جديد مع الوقت المحدد
-            let seekUrl = currentVideoUrl;
-            if (seekUrl.includes('youtube.com')) {
-                if (seekUrl.includes('?')) {
-                    seekUrl = seekUrl.split('?')[0] + '?start=' + seekTime + '&' + seekUrl.split('?')[1];
-                } else {
-                    seekUrl = seekUrl + '?start=' + seekTime;
-                }
-            } else if (seekUrl.includes('youtu.be')) {
-                seekUrl = seekUrl + '?start=' + seekTime;
+            if (youtubePlayer && youtubePlayer.seekTo) {
+                youtubePlayer.seekTo(parseInt(seekTime), true);
+                currentVideoTime = parseInt(seekTime);
+                saveVideoStateToFirebase('seek', currentVideoUrl, currentVideoType, currentVideoTime);
             }
-            
-            createVideoEmbed(seekUrl);
-            saveVideoStateToFirebase('seek', seekUrl, currentVideoType, parseInt(seekTime));
         }
         
         // دالة لحفظ حالة الفيديو في Firebase
-        function saveVideoStateToFirebase(action, videoUrl = null, videoType = null, seekTime = null) {
+        function saveVideoStateToFirebase(action, videoUrl = null, videoType = null, videoTime = null) {
             if (!database) {
                 showError('قاعدة البيانات غير متاحة. تأكد من إعدادات Firebase.');
                 return;
@@ -794,7 +683,7 @@
                 action: action,
                 videoUrl: videoUrl || currentVideoUrl,
                 videoType: videoType || currentVideoType,
-                seekTime: seekTime,
+                videoTime: videoTime !== null ? videoTime : currentVideoTime,
                 timestamp: Date.now(),
                 userId: Math.random().toString(36).substring(7) // معرف فريد للمستخدم
             };
@@ -808,98 +697,6 @@
                     console.error('خطأ في حفظ حالة الفيديو:', error);
                     showError('حدث خطأ في المزامنة. يرجى المحاولة مرة أخرى.');
                 });
-        }
-        
-        // دالة لإظهار وإخفاء الدردشة
-        function toggleChat() {
-            const chatWindow = document.getElementById('chatWindow');
-            chatOpen = !chatOpen;
-            
-            if (chatOpen) {
-                chatWindow.classList.add('open');
-                // إعادة تعيين عدد الرسائل غير المقروءة
-                unreadMessages = 0;
-                document.getElementById('notificationBadge').style.display = 'none';
-            } else {
-                chatWindow.classList.remove('open');
-            }
-        }
-        
-        // دالة لإرسال رسالة
-        function sendMessage() {
-            const messageInput = document.getElementById('messageInput');
-            const message = messageInput.value.trim();
-            
-            if (!message) return;
-            
-            // حفظ الرسالة في Firebase
-            const messageData = {
-                text: message,
-                sender: userName,
-                timestamp: Date.now()
-            };
-            
-            database.ref('chatMessages').push(messageData)
-                .then(() => {
-                    messageInput.value = '';
-                })
-                .catch((error) => {
-                    console.error('خطأ في إرسال الرسالة:', error);
-                    showError('حدث خطأ في إرسال الرسالة. يرجى المحاولة مرة أخرى.');
-                });
-        }
-        
-        // دالة للتعامل مع الضغط على Enter في حقل الرسالة
-        function handleMessageKeypress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-        
-        // دالة للاستماع للرسائل الجديدة
-        function listenForMessages() {
-            if (!database) return;
-            
-            database.ref('chatMessages').on('child_added', (snapshot) => {
-                const message = snapshot.val();
-                displayMessage(message);
-                
-                // إذا كانت الدردشة غير مفتوحة، زيادة عدد الرسائل غير المقروءة
-                if (!chatOpen) {
-                    unreadMessages++;
-                    const badge = document.getElementById('notificationBadge');
-                    badge.textContent = unreadMessages;
-                    badge.style.display = 'flex';
-                }
-            });
-        }
-        
-        // دالة لعرض الرسالة في الدردشة
-        function displayMessage(message) {
-            const chatMessages = document.getElementById('chatMessages');
-            const messageElement = document.createElement('div');
-            
-            messageElement.classList.add('message');
-            if (message.sender === userName) {
-                messageElement.classList.add('my-message');
-            } else {
-                messageElement.classList.add('other-message');
-            }
-            
-            const senderElement = document.createElement('div');
-            senderElement.classList.add('message-sender');
-            senderElement.textContent = message.sender;
-            
-            const textElement = document.createElement('div');
-            textElement.textContent = message.text;
-            
-            messageElement.appendChild(senderElement);
-            messageElement.appendChild(textElement);
-            
-            chatMessages.appendChild(messageElement);
-            
-            // التمرير إلى أحدث رسالة
-            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
         
         // الاستماع للتغييرات في Firebase
@@ -916,25 +713,13 @@
                 }
             });
             
-            // تحديث عدد المستخدمين المتصلين
-            const connectedRef = database.ref('.info/connected');
+            // تحديث عدد المستخدمين المتصلين (للعرض فقط، لا يؤثر على تشغيل الفيديو)
             const usersRef = database.ref('connectedUsers');
             
-            connectedRef.on('value', (snap) => {
-                if (snap.val() === true) {
-                    const userRef = usersRef.push();
-                    userRef.set(true);
-                    userRef.onDisconnect().remove();
-                    
-                    usersRef.on('value', (snap) => {
-                        connectedUsers = snap.numChildren();
-                        document.getElementById('usersCount').textContent = `${connectedUsers} مستخدم متصل`;
-                    });
-                }
+            usersRef.on('value', (snap) => {
+                connectedUsers = snap.numChildren();
+                document.getElementById('usersCount').textContent = `${connectedUsers} مستخدم متصل`;
             });
-            
-            // الاستماع للرسائل
-            listenForMessages();
         }
         
         // معالجة البيانات الواردة من Firebase
@@ -950,6 +735,7 @@
                         document.getElementById('videoUrl').value = state.videoUrl;
                         currentVideoUrl = state.videoUrl;
                         currentVideoType = state.videoType || getVideoType(state.videoUrl);
+                        currentVideoTime = state.videoTime || 0;
                         createVideoEmbed(state.videoUrl);
                     }
                     break;
@@ -958,6 +744,7 @@
                         document.getElementById('videoUrl').value = state.videoUrl;
                         currentVideoUrl = state.videoUrl;
                         currentVideoType = state.videoType || getVideoType(state.videoUrl);
+                        currentVideoTime = state.videoTime || 0;
                         playVideo();
                     }
                     break;
@@ -966,29 +753,28 @@
                         document.getElementById('videoUrl').value = state.videoUrl;
                         currentVideoUrl = state.videoUrl;
                         currentVideoType = state.videoType || getVideoType(state.videoUrl);
+                        currentVideoTime = state.videoTime || 0;
                         pauseVideo();
                     }
                     break;
                 case 'seek':
-                    if (state.videoUrl && state.seekTime !== null && state.videoType === 'youtube') {
+                    if (state.videoUrl && state.videoTime !== null && state.videoType === 'youtube') {
                         document.getElementById('videoUrl').value = state.videoUrl;
                         currentVideoUrl = state.videoUrl;
                         currentVideoType = state.videoType || getVideoType(state.videoUrl);
-                        document.getElementById('seekTime').value = state.seekTime;
+                        currentVideoTime = state.videoTime;
+                        document.getElementById('seekTime').value = Math.floor(state.videoTime);
                         
-                        // إعادة تحميل الفيديو مع الوقت المحدد (لـ YouTube)
-                        let seekUrl = state.videoUrl;
-                        if (seekUrl.includes('youtube.com')) {
-                            if (seekUrl.includes('?')) {
-                                seekUrl = seekUrl.split('?')[0] + '?start=' + state.seekTime + '&' + seekUrl.split('?')[1];
-                            } else {
-                                seekUrl = seekUrl + '?start=' + state.seekTime;
-                            }
-                        } else if (seekUrl.includes('youtu.be')) {
-                            seekUrl = seekUrl + '?start=' + state.seekTime;
+                        if (youtubePlayer && youtubePlayer.seekTo) {
+                            youtubePlayer.seekTo(state.videoTime, true);
                         }
-                        
-                        createVideoEmbed(seekUrl);
+                    }
+                    break;
+                case 'playing':
+                    // تحديث الوقت الحالي دون تغيير حالة التشغيل
+                    if (state.videoUrl === currentVideoUrl) {
+                        currentVideoTime = state.videoTime || 0;
+                        document.getElementById('currentTime').textContent = `الوقت الحالي: ${Math.floor(currentVideoTime)} ثانية`;
                     }
                     break;
             }
@@ -1022,21 +808,13 @@
                             document.getElementById('videoUrl').value = state.videoUrl;
                             currentVideoUrl = state.videoUrl;
                             currentVideoType = state.videoType || getVideoType(state.videoUrl);
+                            currentVideoTime = state.videoTime || 0;
                             createVideoEmbed(state.videoUrl);
                         }
                     })
                     .catch((error) => {
                         console.error('خطأ في تحميل حالة الفيديو:', error);
                         showError('حدث خطأ في تحميل حالة الفيديو. تأكد من اتصال الإنترنت.');
-                    });
-                    
-                // تحميل الرسائل السابقة
-                database.ref('chatMessages').limitToLast(20).once('value')
-                    .then((snapshot) => {
-                        snapshot.forEach((childSnapshot) => {
-                            const message = childSnapshot.val();
-                            displayMessage(message);
-                        });
                     });
             }
         };
@@ -1048,5 +826,8 @@
             }
         });
     </script>
+    
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
 </body>
 </html>
