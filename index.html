@@ -402,12 +402,6 @@
                 return;
             }
             
-            // التحقق من صحة الرابط
-            if (!isValidVideoUrl(videoUrl)) {
-                showError('رابط الفيديو غير صالح أو غير مدعوم. يرجى استخدام رابط من يوتيوب، فيسبوك، تيك توك، فيميوه، أو DailyMotion');
-                return;
-            }
-            
             statusMessage.style.display = 'block';
             statusMessage.textContent = 'جاري تحميل الفيديو...';
             
@@ -433,28 +427,6 @@
             } catch (error) {
                 console.error('Error loading video:', error);
                 showError('حدث خطأ في تحميل الفيديو. يرجى المحاولة مرة أخرى.');
-            }
-        }
-        
-        // دالة للتحقق من صحة رابط الفيديو
-        function isValidVideoUrl(url) {
-            // قائمة بالنطاقات المسموح بها
-            const allowedDomains = [
-                'youtube.com',
-                'youtu.be',
-                'vimeo.com',
-                'facebook.com',
-                'fb.watch',
-                'tiktok.com',
-                'dailymotion.com',
-                'dai.ly'
-            ];
-            
-            try {
-                const urlObj = new URL(url);
-                return allowedDomains.some(domain => urlObj.hostname.includes(domain));
-            } catch (e) {
-                return false;
             }
         }
         
@@ -497,7 +469,7 @@
                     videoId = videoUrl.split('/').pop();
                 }
                 
-                embedCode = `<iframe src="https://www.youtube.com/embed/${videoId}?enablejsapi=1&origin=${window.location.origin}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                embedCode = `<iframe src="https://www.youtube.com/embed/${videoId}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
             } 
             // Vimeo
             else if (videoType === 'vimeo') {
@@ -552,9 +524,9 @@
                 // إضافة معلمة التشغيل التلقائي بناءً على نوع المنصة
                 let autoplayUrl = currentVideoUrl;
                 
-                if (currentVideoUrl.includes('youtube.com') || currentVideoUrl.includes('youtu.be')) {
+                if (currentVideoType === 'youtube') {
                     autoplayUrl = currentVideoUrl + (currentVideoUrl.includes('?') ? '&' : '?') + 'autoplay=1';
-                } else if (currentVideoUrl.includes('vimeo.com')) {
+                } else if (currentVideoType === 'vimeo') {
                     autoplayUrl = currentVideoUrl + (currentVideoUrl.includes('?') ? '&' : '?') + 'autoplay=1';
                 }
                 
@@ -592,6 +564,12 @@
                 return;
             }
             
+            // هذه الميزة تعمل فقط مع YouTube حالياً
+            if (currentVideoType !== 'youtube') {
+                showError('ميزة الانتقال إلى وقت محدد متاحة فقط لفيديوهات YouTube حالياً');
+                return;
+            }
+            
             saveVideoStateToFirebase('seek', currentVideoUrl, currentVideoType, parseInt(seekTime));
         }
         
@@ -607,7 +585,8 @@
                 videoUrl: videoUrl || currentVideoUrl,
                 videoType: videoType || currentVideoType,
                 seekTime: seekTime,
-                timestamp: Date.now()
+                timestamp: Date.now(),
+                userId: Math.random().toString(36).substring(7) // معرف فريد للمستخدم
             };
             
             // حفظ في Firebase
@@ -656,7 +635,7 @@
         // معالجة البيانات الواردة من Firebase
         function handleIncomingData(state) {
             // إذا كانت البيانات من نفس المستخدم، لا تقم بتنفيذها
-            if (state.timestamp && (Date.now() - state.timestamp < 1000)) {
+            if (state.userId === window.userId) {
                 return;
             }
             
@@ -686,11 +665,15 @@
                     }
                     break;
                 case 'seek':
-                    if (state.videoUrl && state.seekTime !== null) {
+                    if (state.videoUrl && state.seekTime !== null && state.videoType === 'youtube') {
                         document.getElementById('videoUrl').value = state.videoUrl;
                         currentVideoUrl = state.videoUrl;
                         currentVideoType = state.videoType || getVideoType(state.videoUrl);
                         document.getElementById('seekTime').value = state.seekTime;
+                        
+                        // إعادة تحميل الفيديو مع الوقت المحدد (لـ YouTube)
+                        const seekUrl = currentVideoUrl + (currentVideoUrl.includes('?') ? '&' : '?') + 'start=' + state.seekTime;
+                        createVideoEmbed(seekUrl);
                     }
                     break;
             }
@@ -709,6 +692,9 @@
         
         // عند تحميل الصفحة
         window.onload = function() {
+            // إنشاء معرف فريد للمستخدم
+            window.userId = Math.random().toString(36).substring(7);
+            
             // بدء الاستماع للتغييرات في Firebase
             listenToFirebaseChanges();
             
